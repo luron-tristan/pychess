@@ -1,5 +1,5 @@
 from tkinter import Canvas
-# from Piece import Piece
+from Piece import Piece
 from settings import *
 
 class Board:
@@ -25,8 +25,8 @@ class Board:
           fill=self.get_text_color(x, y)
           )
 
-    # Piece(canvas, 'K', 'e1')
-    # Piece(canvas, 'k', 'e8')
+    Piece(canvas, 'K', 'e1')
+    Piece(canvas, 'k', 'e8')
     window.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
     window.mainloop()
 
