@@ -1,6 +1,7 @@
 from tkinter import *
 from Piece import Piece
 from settings import *
+from utils import *
 
 class Board:
   def __init__(self, window):
@@ -27,9 +28,7 @@ class Board:
           fill=self.get_text_color(x, y)
           )
     
-
-    Piece(canvas, 'K', 'e1')
-    Piece(canvas, 'k', 'e8')
+    self.new_game(canvas)
 
   def get_square_color(self, x, y):
     return "#FD9" if (x + y) % 2 == 0 else "#530"
@@ -39,3 +38,21 @@ class Board:
 
   def get_square_coordinate(self, _x, _y):
     return f"{X[str(_x)]}{Y[str(_y)]}"
+
+  def new_game(self, canvas):
+    Piece(canvas, 'K', 'e1', self.draw_possible_destinations)
+    Piece(canvas, 'k', 'e8', self.draw_possible_destinations)
+
+  def draw_possible_destinations(self, canvas, positions):
+    try:
+      for pos in positions:
+        print(pos)
+        canvas.create_oval(
+          int(X_INVERT[pos[0]]) * SQUARE + SQUARE - 25,
+          int(Y_INVERT[pos[1]]) * SQUARE + SQUARE - 25,
+          (int(X_INVERT[pos[0]]) + 1) * SQUARE - SQUARE + 25,
+          (int(Y_INVERT[pos[1]]) + 1) * SQUARE - SQUARE + 25,
+          fill="black",
+          tag="pos")
+    except KeyError:
+      invalid_coordinates(positions, "king")

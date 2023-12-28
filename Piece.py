@@ -1,12 +1,16 @@
 from tkinter import *
 from settings import *
+from utils import *
 
 class Piece:
-  def __init__(self, canvas, type, position):
+  def __init__(self, canvas, type, position, draw_possible_destinations):
     self.color = "white" if str.upper(type) == type else "black"
     self.type = type
     self.can_move = True
     self.is_moving = False
+    self.canvas = canvas
+    self.draw_possible_destinations = draw_possible_destinations
+    # self.possible_destinations = ()
 
     try:
       self.coordinates = [position[0], position[1]]
@@ -19,15 +23,16 @@ class Piece:
         tag=type)
 
     except KeyError:
-      print(f"Invalid coordinates: {position[0]}{position[1]} pour la pièce {type}")
-      print("Veuillez fournir des coordonnées entre a1 et h8")
+      invalid_coordinates(position, type)
     
     canvas.tag_bind(self.id, "<Button-1>", self.select_piece)
 
   def select_piece(self, event):
     print("You clicked on", self.type)
     print("Can move:", self.can_move)
-    self.is_moving = True
+    self.is_moving = not self.is_moving
+    if self.is_moving:
+      self.draw_possible_destinations(self.canvas, ("d1", "e2", "f1"))
 
 
 class King(Piece):
