@@ -11,6 +11,10 @@ class Board:
     frame = Frame(window)
     frame.pack()
 
+    self.draw_board(canvas)
+    self.new_game(canvas)
+  
+  def draw_board(self, canvas):
     for x in range(0, 8):
       for y in range(0, 8):
         canvas.create_rectangle(
@@ -28,7 +32,6 @@ class Board:
           fill=self.get_text_color(x, y)
           )
     
-    self.new_game(canvas)
 
   def get_square_color(self, x, y):
     return "#FD9" if (x + y) % 2 == 0 else "#530"
@@ -44,15 +47,17 @@ class Board:
     Piece(canvas, 'k', 'e8', self.draw_possible_destinations)
 
   def draw_possible_destinations(self, canvas, positions):
+    position_list = []
     try:
-      for pos in positions:
-        print(pos)
-        canvas.create_oval(
-          int(X_INVERT[pos[0]]) * SQUARE + SQUARE - 25,
-          int(Y_INVERT[pos[1]]) * SQUARE + SQUARE - 25,
-          (int(X_INVERT[pos[0]]) + 1) * SQUARE - SQUARE + 25,
-          (int(Y_INVERT[pos[1]]) + 1) * SQUARE - SQUARE + 25,
+      for position in positions:
+        position_id = canvas.create_oval(
+          int(X_INVERT[position[0]]) * SQUARE + SQUARE - 25,
+          int(Y_INVERT[position[1]]) * SQUARE + SQUARE - 25,
+          (int(X_INVERT[position[0]]) + 1) * SQUARE - SQUARE + 25,
+          (int(Y_INVERT[position[1]]) + 1) * SQUARE - SQUARE + 25,
           fill="black",
-          tag="pos")
+          tag="position")
+        position_list.append(position_id)
     except KeyError:
       invalid_coordinates(positions, "king")
+    return position_list
