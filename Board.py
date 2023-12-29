@@ -15,8 +15,8 @@ class Board:
     self.new_game(canvas)
   
   def draw_board(self, canvas):
-    for x in range(0, 8):
-      for y in range(0, 8):
+    for y in range(0, 8):
+      for x in range(0, 8):
         canvas.create_rectangle(
           x * SQUARE,
           y * SQUARE,
@@ -28,9 +28,10 @@ class Board:
           (x + 1) * SQUARE - int(OFFSET),
           (y + 1) * SQUARE - int(OFFSET),
           text=self.get_square_coordinate(x, y),
-          font=("consolas", 8),
-          fill=self.get_text_color(x, y)
-          )
+          font=("Consolas", 8),
+          fill=self.get_text_color(x, y),
+          tag=self.get_square_coordinate(x, y)
+        )
     
 
   def get_square_color(self, x, y):
@@ -45,6 +46,7 @@ class Board:
   def new_game(self, canvas):
     Piece(canvas, 'K', 'e1', self.draw_possible_destinations)
     Piece(canvas, 'k', 'e8', self.draw_possible_destinations)
+    Piece(canvas, '', 'c2', self.draw_possible_destinations)
 
   def draw_possible_destinations(self, canvas, positions):
     position_list = []
@@ -55,7 +57,7 @@ class Board:
           int(Y_INVERT[position[1]]) * SQUARE + SQUARE - 25,
           (int(X_INVERT[position[0]]) + 1) * SQUARE - SQUARE + 25,
           (int(Y_INVERT[position[1]]) + 1) * SQUARE - SQUARE + 25,
-          fill="black",
+          fill="brown",
           tag="position")
         position_list.append(position_id)
     except KeyError:
