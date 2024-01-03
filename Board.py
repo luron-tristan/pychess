@@ -2,6 +2,9 @@ from tkinter import *
 from Piece import Piece
 from settings import *
 from utils import *
+from stockfish import Stockfish
+
+stockfish = Stockfish(path="C:/Users/user/Downloads/stockfish/stockfish/stockfish-windows-x86-64-avx2")
 
 class Board:
   def __init__(self, window):
@@ -15,8 +18,8 @@ class Board:
     self.new_game(canvas)
   
   def draw_board(self, canvas):
-    for y in range(0, 8):
-      for x in range(0, 8):
+    for y in range(8):
+      for x in range(8):
         canvas.create_rectangle(
           x * SQUARE,
           y * SQUARE,

@@ -2,8 +2,9 @@ from tkinter import *
 from settings import *
 from utils import *
 from abc import ABC, abstractmethod
+from utils import Sf
 
-class Piece:
+class Piece(Sf):
   def __init__(self, canvas, type, position, draw_possible_destinations):
     self.color = "white" if str.upper(type) == type else "black"
     self.type = type
@@ -19,8 +20,10 @@ class Piece:
   def get_piece(self):
     if str.upper(self.type) == 'K':
       return King(self.position, self.can_move)
+    elif str.upper(self.type) == 'N':
+      return Knight(self.position, self.can_move)
     else:
-      return Pon(self.position, self.can_move)
+      return Pawn(self.position, self.can_move)
 
   def draw_position(self):
     try:
@@ -38,6 +41,13 @@ class Piece:
         text=self.type,
         font=("Consolas", 20),
         fill="red")
+      
+      # photo_image = PhotoImage(file="assets/king.png")
+      # my_image = self.canvas.create_image(
+      #   int(X_INVERT[coordinates[0]]) * SQUARE + SQUARE // 2,
+      #   int(Y_INVERT[coordinates[1]]) * SQUARE + SQUARE // 2,
+      #   image=photo_image,
+      #   anchor=NW)
 
     except KeyError:
       invalid_coordinates(self.position, type)
@@ -53,22 +63,32 @@ class Piece:
         self.canvas,
         self.piece_object.get_possible_destinations())
       print("self.destinations", self.destinations)
-    else:
-      if len(self.destinations):
-        for destination in self.destinations:
-          self.canvas.delete(destination)
+    elif len(self.destinations):
+      for destination in self.destinations:
+        self.canvas.delete(destination)
 
-class BasePiece(ABC):
+class BasePiece(Sf, ABC):
   def __init__(self, position, can_move):
+    super().__init__()
     self.position = position
     self.can_move = can_move
+    print(self.stockfish)
     
-  @abstractmethod
+
   def get_possible_destinations(self):
-    # 2 solutions:
-    # - pass all moves to stockfish and let it decide if move is valid
-    # - have a set of moves per piece type
-    pass
+    if not self.can_move:
+      return []
+    destinations = []
+    for x in XX:
+      destinations.extend(
+        f"{x}{y}" for y in YY
+        if self.stockfish.is_move_correct(move_value=f"{self.position}{x}{y}"))
+    print(destinations)
+    return destinations
+
+  # @abstractmethod
+  # def move_piece(self):
+  #   pass
     
 
 class King(BasePiece):
@@ -78,36 +98,20 @@ class King(BasePiece):
   def get_possible_destinations(self):
     if not self.can_move:
       return []
-
-    current_x = XX.index(self.position[0])
-    destination_x = [XX[current_x]]
-    if current_x - 1 >= 0:
-      destination_x.append(XX[current_x - 1])
-    if current_x + 1 <= 7:
-      destination_x.append(XX[current_x + 1])
-
-    current_y = YY.index(self.position[1])
-    destination_y = [YY[current_y]]
-    if current_y - 1 >= 0:
-      destination_y.append(YY[current_y - 1])
-    if current_y + 1 <= 7:
-      destination_y.append(YY[current_y + 1])
-
-    print("x:", destination_x)
-    print("y:", destination_y)
+    # print("stockfish", stockfish)
     destinations = []
-    for i in destination_x:
-      for j in destination_y:
-        # check if square attacked by enemy piece
-        if f"{i}{j}" != self.position:
-          destinations.append(f"{i}{j}")
-    
+    for x in XX:
+      destinations.extend(
+        f"{x}{y}" for y in YY
+        if self.stockfish.is_move_correct(move_value=f"{self.position}{x}{y}"))
+    print(destinations)
     return destinations
 
-class Pon(BasePiece):
+class Pawn(BasePiece):
   def __init__(self, position, can_move):
     super().__init__(position, can_move)
-    
-  def get_possible_destinations(self):
-    print("pon pos >", self.position)
-    return ("c3", "c4")
+
+
+class Knight(BasePiece):
+  def __init__(self, position, can_move):
+    super().__init__(position, can_move)
