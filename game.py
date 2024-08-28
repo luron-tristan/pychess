@@ -11,3 +11,8 @@ def main():
 
 if __name__ == "__main__":
   main()
+
+# Sf useless for now
+# next moves:
+# - draw pieces on the board
+# - move pieces with stockfish

@@ -1,10 +1,10 @@
 from tkinter import *
 from settings import *
 from utils import *
-from abc import ABC, abstractmethod
-from utils import Sf
+from abc import ABC
+# from Stockfish import Sf
 
-class Piece(Sf):
+class Piece():
   def __init__(self, canvas, type, position, draw_possible_destinations):
     self.color = "white" if str.upper(type) == type else "black"
     self.type = type
@@ -12,7 +12,7 @@ class Piece(Sf):
     self.can_move = True # False if piece pinned to king or king in check
     self.piece_object = self.get_piece()
     self.is_moving = False
-    self.canvas = canvas
+    self.canvas: Canvas = canvas
     self.draw_position()
     self.draw_possible_destinations = draw_possible_destinations
     self.destinations = None
@@ -27,32 +27,30 @@ class Piece(Sf):
 
   def draw_position(self):
     try:
-      coordinates = [self.position[0], self.position[1]]
-      self.id = self.canvas.create_oval(
-        int(X_INVERT[coordinates[0]]) * SQUARE,
-        int(Y_INVERT[coordinates[1]]) * SQUARE,
-        (int(X_INVERT[coordinates[0]]) + 1) * SQUARE,
-        (int(Y_INVERT[coordinates[1]]) + 1) * SQUARE,
-        fill=self.color,
-        tag=type)
-      self.canvas.create_text(
-        int(X_INVERT[coordinates[0]]) * SQUARE + SQUARE // 2,
-        int(Y_INVERT[coordinates[1]]) * SQUARE + SQUARE // 2,
-        text=self.type,
-        font=("Consolas", 20),
-        fill="red")
-      
-      # photo_image = PhotoImage(file="assets/king.png")
-      # my_image = self.canvas.create_image(
+      # coordinates = [self.position[0], self.position[1]]
+      # self.id = self.canvas.create_oval(
+      #   int(X_INVERT[coordinates[0]]) * SQUARE,
+      #   int(Y_INVERT[coordinates[1]]) * SQUARE,
+      #   (int(X_INVERT[coordinates[0]]) + 1) * SQUARE,
+      #   (int(Y_INVERT[coordinates[1]]) + 1) * SQUARE,
+      #   fill=self.color,
+      #   tag=type)
+      # self.canvas.create_text(
       #   int(X_INVERT[coordinates[0]]) * SQUARE + SQUARE // 2,
       #   int(Y_INVERT[coordinates[1]]) * SQUARE + SQUARE // 2,
-      #   image=photo_image,
-      #   anchor=NW)
+      #   text=self.type,
+      #   font=("Consolas", 20),
+      #   fill="red")
+      
+      photo_image = PhotoImage(file="./assets/white_king.png").zoom(50)
+      my_image = self.canvas.create_image(100,100,
+        image=photo_image,
+        anchor=NW)
 
     except KeyError:
       invalid_coordinates(self.position, type)
     
-    self.canvas.tag_bind(self.id, "<Button-1>", self.select_piece)
+    # self.canvas.tag_bind(self.id, "<Button-1>", self.select_piece)
     # self.canvas.bind('<Button-1>', self.select_piece)
 
   def select_piece(self, event):
@@ -67,12 +65,12 @@ class Piece(Sf):
       for destination in self.destinations:
         self.canvas.delete(destination)
 
-class BasePiece(Sf, ABC):
+class BasePiece(ABC):
   def __init__(self, position, can_move):
     super().__init__()
     self.position = position
     self.can_move = can_move
-    print(self.stockfish)
+    # print(self.stockfish)
     
 
   def get_possible_destinations(self):
@@ -83,7 +81,6 @@ class BasePiece(Sf, ABC):
       destinations.extend(
         f"{x}{y}" for y in YY
         if self.stockfish.is_move_correct(move_value=f"{self.position}{x}{y}"))
-    print(destinations)
     return destinations
 
   # @abstractmethod
@@ -94,18 +91,6 @@ class BasePiece(Sf, ABC):
 class King(BasePiece):
   def __init__(self, position, can_move):
     super().__init__(position, can_move)
-
-  def get_possible_destinations(self):
-    if not self.can_move:
-      return []
-    # print("stockfish", stockfish)
-    destinations = []
-    for x in XX:
-      destinations.extend(
-        f"{x}{y}" for y in YY
-        if self.stockfish.is_move_correct(move_value=f"{self.position}{x}{y}"))
-    print(destinations)
-    return destinations
 
 class Pawn(BasePiece):
   def __init__(self, position, can_move):

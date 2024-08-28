@@ -2,20 +2,24 @@ from tkinter import *
 from Piece import Piece
 from settings import *
 from utils import *
+# from Stockfish import Sf
 from stockfish import Stockfish
 
-stockfish = Stockfish(path="C:/Users/user/Downloads/stockfish/stockfish/stockfish-windows-x86-64-avx2")
+# stockfish = Stockfish(path="C:/Users/user/Downloads/stockfish/stockfish/stockfish-windows-x86-64-avx2")
 
 class Board:
-  def __init__(self, window):
-    canvas = Canvas(window, bg="#FD9", height=WINDOW_HEIGHT, width=WINDOW_WIDTH)
-    canvas.pack()
-
-    frame = Frame(window)
-    frame.pack()
+  def __init__(self, window: Tk):
+    canvas = Canvas(window,
+                    bg="#FD9",
+                    height=WINDOW_HEIGHT,
+                    width=WINDOW_WIDTH,
+                    )
 
     self.draw_board(canvas)
-    self.new_game(canvas)
+    
+    self.stockfish = Stockfish(path=r"C:\Users\user\projets\python\pychess\stockfish\stockfish-windows-x86-64-avx2.exe")
+    self.new_game()
+    
   
   def draw_board(self, canvas):
     for y in range(8):
@@ -35,6 +39,7 @@ class Board:
           fill=self.get_text_color(x, y),
           tag=self.get_square_coordinate(x, y)
         )
+    canvas.pack()
     
 
   def get_square_color(self, x, y):
@@ -46,10 +51,11 @@ class Board:
   def get_square_coordinate(self, _x, _y):
     return f"{X[str(_x)]}{Y[str(_y)]}"
 
-  def new_game(self, canvas):
-    Piece(canvas, 'K', 'e1', self.draw_possible_destinations)
-    Piece(canvas, 'k', 'e8', self.draw_possible_destinations)
-    Piece(canvas, '', 'c2', self.draw_possible_destinations)
+  def new_game(self):
+    fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    self.stockfish.set_fen_position(fen)
+    print("Game reset")
+    print(self.stockfish.get_board_visual())
 
   def draw_possible_destinations(self, canvas, positions):
     position_list = []
