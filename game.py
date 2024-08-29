@@ -1,6 +1,6 @@
 from tkinter import Tk
 from Board import Board
-from settings import *
+from settings import WINDOW_WIDTH, WINDOW_HEIGHT
 
 window = Tk()
 
