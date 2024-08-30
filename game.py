@@ -14,5 +14,6 @@ if __name__ == "__main__":
 
 # Sf useless for now
 # next moves:
-# - draw pieces on the board
 # - move pieces with stockfish
+# - unselect piece when blur or another is clicked
+# - make stockfish global

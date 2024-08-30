@@ -59,7 +59,6 @@ class Board:
       for x in X:
         square = f"{x}{y}"
         if piece := self.stockfish.get_what_is_on_square(square):
-          print("piece: ", piece)
           Piece(self.canvas, piece, square, self.stockfish, self.draw_possible_destinations)
 
   def draw_possible_destinations(self, positions):
@@ -67,11 +66,11 @@ class Board:
     try:
       for position in positions:
         position_id = self.canvas.create_oval(
-          int(X_INVERT[position[0]]) * SQUARE + SQUARE - 25,
-          int(Y_INVERT[position[1]]) * SQUARE + SQUARE - 25,
-          (int(X_INVERT[position[0]]) + 1) * SQUARE - SQUARE + 25,
-          (int(Y_INVERT[position[1]]) + 1) * SQUARE - SQUARE + 25,
-          fill="brown",
+          int(X.index(position[0])) * SQUARE + SQUARE - 25,
+          int(Y.index(position[1])) * SQUARE + SQUARE - 25,
+          (int(X.index(position[0])) + 1) * SQUARE - SQUARE + 25,
+          (int(Y.index(position[1])) + 1) * SQUARE - SQUARE + 25,
+          fill="gray",
           tag="position")
         position_list.append(position_id)
     except KeyError:
