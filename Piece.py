@@ -15,6 +15,8 @@ class Piece():
     self.draw_position()
     self.draw_possible_destinations = draw_possible_destinations
     self.destinations = []
+  
+  selected_piece = None
 
   def get_piece(self):
     color = "WHITE" if "WHITE" in str(self.type) else "BLACK"
@@ -38,14 +40,30 @@ class Piece():
     # self.canvas.bind('<Button-1>', self.select_piece)
 
   def select_piece(self, event):
+    if Piece.selected_piece and Piece.selected_piece != self:
+      Piece.selected_piece.deselect()
+
     self.selected = not self.selected
     if self.selected:
+      Piece.selected_piece = self
       self.destinations = self.draw_possible_destinations(
         self.piece_object.get_possible_destinations())
       print("self.destinations", self.destinations)
     elif len(self.destinations):
+      Piece.selected_piece = None
       for destination in self.destinations:
         self.canvas.delete(destination)
+
+  def deselect(self):
+    self.selected = False
+    self.clear_destinations()
+  
+  def clear_destinations(self):
+    if self.destinations:
+      for destination in self.destinations:
+        self.canvas.delete(destination)
+      self.destinations = []
+
 
 class BasePiece():
   def __init__(self, type, position, color, stockfish):
